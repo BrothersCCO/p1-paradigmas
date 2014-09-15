@@ -1,11 +1,13 @@
 professor('Patrícia').
 professor('Mauro').
 professor('Dovicchi').
+professor('Ranieri').
+professor('Maike').
 professores(Z) :- findall(X, professor(X), Z).
 
-aluno('Eduardo').
-aluno('Ranieri').
-aluno('Maike').
+aluno(eduardo).
+aluno(ranieri).
+aluno(maike).
 alunos(Z) :- findall(X, aluno(X), Z).
 
 mestrando('Ranieri', 2013).
@@ -14,12 +16,18 @@ orientou('Mauro', 'Eduardo').
 orientou('Mauro', 'Ranieri').
 orientou('Dovicchi', 'Maike').
 
-publicou(['Ranieri', 'Maike'], 'A importância dos dinossauros kawaii-desu', 2014).
-publicou(['Eduardo', 'Ranieri'], 'Como o amor pode afetar as libélulas', 2013).
-publicou(['Dovicchi', 'Mauro', 'Ranieri'], 'Fotos da tua mãe pelada', 2013).
+publicou('Ranieri', 'A importância dos dinossauros kawaii-desu', 2014).
+publicou('Maike', 'A importância dos dinossauros kawaii-desu', 2014).
+
+publicou('Eduardo', 'Como o amor pode afetar as libélulas', 2013).
+publicou('Ranieri', 'Como o amor pode afetar as libélulas', 2013).
+
+publicou('Dovicchi', 'Fotos da tua mãe pelada', 2013).
+publicou('Mauro', 'Fotos da tua mãe pelada', 2013).
+publicou('Ranieri', 'Fotos da tua mãe pelada', 2013).
 
 orientandos(X, Y) :- findall(Z, orientou(X, Z), Y).
-publicacoes(X, Y) :- member(X, A), findall(Z, publicou(A, Z), Y).
+publicacoes(X, Y) :- findall(Z, publicou(X, Z, _), Y).
 
 qtd_orientandos(X, Y) :- orientandos(X, Z), length(Z, Y).
 qtd_publicacoes(X, Y) :- publicacoes(X, Z), length(Z, Y).
@@ -53,15 +61,17 @@ se_forma_ate(X, Y) :-
 	B is Y,
 	B > A, !.
 
-questao12a(X) :-
+coautorado(X) :-
 	professores(A),
-	intersection(A, X, Y),
+	findall(Y, publicou(Y, X, _), B),
+	intersection(A, B, Y),
 	length(Y, Z),
 	Z >= 2, !.
 
-questao12b(Z) :-
-	findall(X, publicou(X, Y), C),
-	include(questao12a, C, Z).
+questao12(Z) :-
+	findall(X, publicou(_, X, _), C),
+	include(coautorado, C, Y),
+	sort(Y, Z).
 
 contem_professor(X) :-
 	professores(A),
